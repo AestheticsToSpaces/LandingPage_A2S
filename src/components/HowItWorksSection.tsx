@@ -29,6 +29,39 @@ const steps = [
   },
 ];
 
+function StepCard({ step, index }: { step: typeof steps[0]; index: number }) {
+  const stepRef = useRef(null);
+  const stepInView = useInView(stepRef, { once: true, margin: '-50px' });
+
+  return (
+    <motion.div
+      ref={stepRef}
+      initial={{ opacity: 0, y: 40 }}
+      animate={stepInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      className="relative text-center group"
+    >
+      {index < steps.length - 1 && (
+        <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-px bg-gradient-to-r from-border to-transparent" />
+      )}
+
+      <div className="relative mx-auto w-20 h-20 rounded-2xl bg-card shadow-sm border border-border flex items-center justify-center mb-6 group-hover:bg-accent transition-colors duration-500">
+        <step.icon size={28} className="text-primary" />
+        <span className="absolute -top-2 -right-2 text-xs font-display font-bold text-primary-foreground bg-copper rounded-full w-7 h-7 flex items-center justify-center">
+          {step.num}
+        </span>
+      </div>
+
+      <h3 className="font-display text-lg font-semibold text-foreground mb-3">
+        {step.title}
+      </h3>
+      <p className="font-body text-sm text-muted-foreground leading-relaxed max-w-[250px] mx-auto">
+        {step.desc}
+      </p>
+    </motion.div>
+  );
+}
+
 export default function HowItWorksSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
@@ -55,40 +88,9 @@ export default function HowItWorksSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, i) => {
-            const stepRef = useRef(null);
-            const stepInView = useInView(stepRef, { once: true, margin: '-50px' });
-
-            return (
-              <motion.div
-                key={step.num}
-                ref={stepRef}
-                initial={{ opacity: 0, y: 40 }}
-                animate={stepInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="relative text-center group"
-              >
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-px bg-gradient-to-r from-border to-transparent" />
-                )}
-
-                <div className="relative mx-auto w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors duration-500">
-                  <step.icon size={28} className="text-primary" />
-                  <span className="absolute -top-2 -right-2 text-xs font-display font-bold text-copper bg-background border border-border rounded-full w-7 h-7 flex items-center justify-center">
-                    {step.num}
-                  </span>
-                </div>
-
-                <h3 className="font-display text-lg font-semibold text-foreground mb-3">
-                  {step.title}
-                </h3>
-                <p className="font-body text-sm text-muted-foreground leading-relaxed max-w-[250px] mx-auto">
-                  {step.desc}
-                </p>
-              </motion.div>
-            );
-          })}
+          {steps.map((step, i) => (
+            <StepCard key={step.num} step={step} index={i} />
+          ))}
         </div>
       </div>
     </section>

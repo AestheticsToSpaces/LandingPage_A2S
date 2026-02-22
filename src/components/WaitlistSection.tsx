@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Users } from 'lucide-react';
 
 export default function WaitlistSection() {
   const ref = useRef(null);
@@ -15,7 +15,7 @@ export default function WaitlistSection() {
 
   return (
     <section id="waitlist" className="relative py-32">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/20 to-transparent" />
 
       <div className="container mx-auto px-6 relative">
         <motion.div
@@ -29,9 +29,15 @@ export default function WaitlistSection() {
             Be the First to{' '}
             <span className="text-gradient-teal">Experience A2S</span>
           </h2>
-          <p className="font-body text-muted-foreground mb-10">
+          <p className="font-body text-muted-foreground mb-4">
             Join our early access list. Launching 2nd week of March 2026.
           </p>
+          <div className="flex items-center justify-center gap-2 mb-10">
+            <Users size={14} className="text-copper" />
+            <span className="font-body text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">2,400+</span> people already signed up
+            </span>
+          </div>
 
           {!submitted ? (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
@@ -41,7 +47,7 @@ export default function WaitlistSection() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 px-5 py-4 rounded-xl bg-muted border border-border text-foreground font-body placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                className="flex-1 px-5 py-4 rounded-xl bg-card border border-border text-foreground font-body placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all shadow-sm"
               />
               <button
                 type="submit"

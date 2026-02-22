@@ -55,11 +55,13 @@ export default {
           DEFAULT: "hsl(var(--teal))",
           light: "hsl(var(--teal-light))",
           glow: "hsl(var(--teal-glow))",
+          bg: "hsl(var(--teal-bg))",
         },
         copper: {
           DEFAULT: "hsl(var(--copper))",
           light: "hsl(var(--copper-light))",
           glow: "hsl(var(--copper-glow))",
+          bg: "hsl(var(--copper-bg))",
         },
         gold: "hsl(var(--gold))",
         sidebar: {
@@ -107,6 +109,10 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.5)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "marquee": {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -116,6 +122,7 @@ export default {
         "fade-up": "fade-up 0.8s ease-out forwards",
         "slide-in-left": "slide-in-left 0.6s ease-out forwards",
         "count-up": "count-up 0.5s ease-out forwards",
+        "marquee": "marquee 30s linear infinite",
       },
     },
   },

@@ -2,11 +2,35 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 
 const stats = [
-  { value: '₹5.2L Cr', label: 'Total Addressable Market', accent: 'teal' },
-  { value: '80%', label: 'Unorganized Market', accent: 'copper' },
-  { value: '751M+', label: 'Internet Users in India', accent: 'teal' },
-  { value: '12+', label: 'Platforms Visited per Purchase', accent: 'copper' },
+  { value: '₹5.2L Cr', label: 'Total Addressable Market', accent: 'teal' as const },
+  { value: '80%', label: 'Unorganized Market', accent: 'copper' as const },
+  { value: '751M+', label: 'Internet Users in India', accent: 'teal' as const },
+  { value: '12+', label: 'Platforms Visited per Purchase', accent: 'copper' as const },
 ];
+
+function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
+  const cardRef = useRef(null);
+  const cardInView = useInView(cardRef, { once: true, margin: '-30px' });
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={cardInView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="glass-card rounded-2xl p-8 text-center"
+    >
+      <div className={`font-display text-3xl md:text-4xl font-bold mb-3 ${
+        stat.accent === 'teal' ? 'text-gradient-teal' : 'text-gradient-copper'
+      }`}>
+        {stat.value}
+      </div>
+      <p className="font-body text-xs text-muted-foreground uppercase tracking-wider leading-relaxed">
+        {stat.label}
+      </p>
+    </motion.div>
+  );
+}
 
 export default function MarketSection() {
   const ref = useRef(null);
@@ -14,7 +38,7 @@ export default function MarketSection() {
 
   return (
     <section id="market" className="relative py-32">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
 
       <div className="container mx-auto px-6 relative">
         <motion.div
@@ -37,30 +61,9 @@ export default function MarketSection() {
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, i) => {
-            const cardRef = useRef(null);
-            const cardInView = useInView(cardRef, { once: true, margin: '-30px' });
-
-            return (
-              <motion.div
-                key={stat.label}
-                ref={cardRef}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={cardInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass-card rounded-2xl p-8 text-center"
-              >
-                <div className={`font-display text-3xl md:text-4xl font-bold mb-3 ${
-                  stat.accent === 'teal' ? 'text-gradient-teal' : 'text-gradient-copper'
-                }`}>
-                  {stat.value}
-                </div>
-                <p className="font-body text-xs text-muted-foreground uppercase tracking-wider leading-relaxed">
-                  {stat.label}
-                </p>
-              </motion.div>
-            );
-          })}
+          {stats.map((stat, i) => (
+            <StatCard key={stat.label} stat={stat} index={i} />
+          ))}
         </div>
       </div>
     </section>

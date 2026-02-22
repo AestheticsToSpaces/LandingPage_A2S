@@ -8,10 +8,9 @@ export default function VisionSection() {
 
   return (
     <section id="vision" className="relative py-32 overflow-hidden">
-      {/* Background image */}
       <div className="absolute inset-0 z-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background" />
+        <img src={heroBg} alt="" className="w-full h-full object-cover opacity-8" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">

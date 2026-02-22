@@ -46,9 +46,9 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="group glass-card rounded-2xl p-8 hover:border-primary/30 transition-all duration-500 hover:bg-glow-teal"
+      className="group glass-card rounded-2xl p-8 hover:border-primary/20 transition-all duration-500"
     >
-      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
+      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center mb-5 group-hover:bg-primary/10 transition-colors">
         <feature.icon size={22} className="text-primary" />
       </div>
       <h3 className="font-display text-lg font-semibold text-foreground mb-3">
@@ -67,8 +67,7 @@ export default function FeaturesSection() {
 
   return (
     <section id="product" className="relative py-32 overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/3 blur-[120px]" />
 
       <div className="container mx-auto px-6 relative">
         <motion.div

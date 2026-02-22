@@ -6,8 +6,8 @@ import logo from '@/assets/logo.jpeg';
 const navItems = [
   { label: 'Product', href: '#product' },
   { label: 'How It Works', href: '#how-it-works' },
+  { label: 'Demo', href: '#demo' },
   { label: 'Market', href: '#market' },
-  { label: 'Vision', href: '#vision' },
 ];
 
 export default function Navbar() {
@@ -26,7 +26,7 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'glass-nav py-3' : 'py-5'
+        scrolled ? 'glass-nav py-3 shadow-sm' : 'py-5'
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-6">
@@ -37,7 +37,6 @@ export default function Navbar() {
           </span>
         </a>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <a
@@ -46,7 +45,7 @@ export default function Navbar() {
               className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 relative group"
             >
               {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
           <a
@@ -57,7 +56,6 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden text-foreground"
@@ -67,7 +65,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div

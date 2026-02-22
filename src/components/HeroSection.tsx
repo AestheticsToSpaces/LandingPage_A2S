@@ -1,28 +1,33 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Users } from 'lucide-react';
 import Scene3D from './Scene3D';
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Background */}
       <Scene3D />
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background z-[1]" />
+      {/* Subtle gradient overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background z-[1]" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent z-[1]" />
 
-      {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center">
+        {/* Social proof badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-muted/50 mb-8"
+          className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-border bg-card/80 backdrop-blur-sm mb-8 shadow-sm"
         >
-          <Sparkles size={14} className="text-copper" />
-          <span className="text-xs font-body text-muted-foreground tracking-wide uppercase">
-            Launching March 2026 · 28,000+ Products
+          <div className="flex -space-x-2">
+            {['🧑‍💻', '👩‍🎨', '👨‍💼', '👩‍💻'].map((emoji, i) => (
+              <span key={i} className="w-6 h-6 rounded-full bg-muted border-2 border-card flex items-center justify-center text-xs">
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <span className="text-xs font-body text-muted-foreground">
+            <span className="font-semibold text-foreground">2,400+</span> designers already on the waitlist
           </span>
         </motion.div>
 
@@ -62,14 +67,14 @@ export default function HeroSection() {
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </a>
           <a
-            href="#product"
+            href="#demo"
             className="flex items-center gap-2 px-8 py-4 rounded-xl border border-border text-foreground font-display font-medium text-base hover:bg-muted transition-all duration-300"
           >
-            See How It Works
+            See Product Demo
           </a>
         </motion.div>
 
-        {/* Stats ticker */}
+        {/* Stats */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
