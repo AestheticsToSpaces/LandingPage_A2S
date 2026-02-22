@@ -1,96 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 4%;
+    --foreground: 40 20% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 210 18% 8%;
+    --card-foreground: 40 20% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 210 18% 8%;
+    --popover-foreground: 40 20% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 192 60% 28%;
+    --primary-foreground: 40 20% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 28 50% 55%;
+    --secondary-foreground: 210 20% 4%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 15% 12%;
+    --muted-foreground: 210 10% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 28 50% 55%;
+    --accent-foreground: 210 20% 4%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 210 15% 15%;
+    --input: 210 15% 15%;
+    --ring: 192 60% 28%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom tokens */
+    --teal: 192 60% 28%;
+    --teal-light: 192 55% 42%;
+    --teal-glow: 192 80% 50%;
+    --copper: 28 50% 55%;
+    --copper-light: 28 55% 68%;
+    --copper-glow: 28 70% 60%;
+    --gold: 38 60% 55%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --gradient-hero: linear-gradient(135deg, hsl(192 60% 28% / 0.3), hsl(28 50% 55% / 0.2));
+    --gradient-card: linear-gradient(145deg, hsl(210 18% 10%), hsl(210 18% 6%));
+    --gradient-accent: linear-gradient(135deg, hsl(192 60% 28%), hsl(192 55% 42%));
+    --gradient-copper: linear-gradient(135deg, hsl(28 50% 55%), hsl(38 60% 55%));
 
-    --sidebar-primary: 240 5.9% 10%;
+    --shadow-glow-teal: 0 0 40px hsl(192 80% 50% / 0.15);
+    --shadow-glow-copper: 0 0 40px hsl(28 70% 60% / 0.15);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 210 18% 8%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 192 60% 28%;
+    --sidebar-primary-foreground: 40 20% 95%;
+    --sidebar-accent: 210 15% 12%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 210 15% 15%;
+    --sidebar-ring: 192 60% 28%;
   }
 }
 
@@ -101,5 +75,72 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+
+  ::selection {
+    background: hsl(192 60% 28% / 0.4);
+    color: hsl(40 20% 95%);
+  }
+}
+
+@layer utilities {
+  .text-gradient-teal {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(192 55% 42%), hsl(192 80% 50%));
+  }
+
+  .text-gradient-copper {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(28 50% 55%), hsl(38 60% 55%));
+  }
+
+  .text-gradient-hero {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(40 20% 95%), hsl(28 55% 68%));
+  }
+
+  .bg-glow-teal {
+    box-shadow: var(--shadow-glow-teal);
+  }
+
+  .bg-glow-copper {
+    box-shadow: var(--shadow-glow-copper);
+  }
+
+  .glass-card {
+    background: hsl(210 18% 8% / 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(210 15% 15% / 0.5);
+  }
+
+  .glass-nav {
+    background: hsl(210 20% 4% / 0.8);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid hsl(210 15% 15% / 0.3);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(210 20% 4%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(192 60% 28% / 0.5);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(192 60% 28% / 0.8);
 }
