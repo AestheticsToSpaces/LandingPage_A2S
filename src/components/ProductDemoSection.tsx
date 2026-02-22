@@ -1,6 +1,20 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Bed, Sofa, ChefHat, Bath, IndianRupee, Palette, Wand2, ArrowRight, ExternalLink, Star } from 'lucide-react';
+import { Bed, Sofa, ChefHat, IndianRupee, Palette, Wand2, ArrowRight, Star } from 'lucide-react';
+
+// Product images
+import sofaImg from '@/assets/products/sofa.jpg';
+import coffeeTableImg from '@/assets/products/coffee-table.jpg';
+import lampImg from '@/assets/products/lamp.jpg';
+import rugImg from '@/assets/products/rug.jpg';
+import tvUnitImg from '@/assets/products/tv-unit.jpg';
+import bedImg from '@/assets/products/bed.jpg';
+import mattressImg from '@/assets/products/mattress.jpg';
+import nightstandImg from '@/assets/products/nightstand.jpg';
+import wardrobeImg from '@/assets/products/wardrobe.jpg';
+import kitchenCabinetImg from '@/assets/products/kitchen-cabinet.jpg';
+import countertopImg from '@/assets/products/countertop.jpg';
+import chimneyImg from '@/assets/products/chimney.jpg';
 
 const rooms = [
   { id: 'living', label: 'Living Room', icon: Sofa },
@@ -19,26 +33,27 @@ interface Product {
   altPrice?: string;
   altPlatform?: string;
   rating: number;
+  image: string;
 }
 
 const demoProducts: Record<string, Product[]> = {
   living: [
-    { name: '3-Seater L-Shape Sofa', category: 'Seating', price: '₹28,999', platform: 'Pepperfry', altPrice: '₹32,499', altPlatform: 'Urban Ladder', rating: 4.3 },
-    { name: 'Solid Wood Coffee Table', category: 'Table', price: '₹8,499', platform: 'Amazon', altPrice: '₹9,199', altPlatform: 'Flipkart', rating: 4.5 },
-    { name: 'Floor Lamp – Brass Finish', category: 'Lighting', price: '₹4,299', platform: 'IKEA', altPrice: '₹5,100', altPlatform: 'HomeTown', rating: 4.1 },
-    { name: 'Handwoven Area Rug 5x7', category: 'Decor', price: '₹6,799', platform: 'Jaypore', altPrice: '₹7,999', altPlatform: 'FabIndia', rating: 4.6 },
-    { name: 'TV Console Unit – Walnut', category: 'Storage', price: '₹12,499', platform: 'WoodenStreet', altPrice: '₹14,299', altPlatform: 'Pepperfry', rating: 4.4 },
+    { name: '3-Seater L-Shape Sofa', category: 'Seating', price: '₹28,999', platform: 'Pepperfry', altPrice: '₹32,499', altPlatform: 'Urban Ladder', rating: 4.3, image: sofaImg },
+    { name: 'Solid Wood Coffee Table', category: 'Table', price: '₹8,499', platform: 'Amazon', altPrice: '₹9,199', altPlatform: 'Flipkart', rating: 4.5, image: coffeeTableImg },
+    { name: 'Floor Lamp – Brass Finish', category: 'Lighting', price: '₹4,299', platform: 'IKEA', altPrice: '₹5,100', altPlatform: 'HomeTown', rating: 4.1, image: lampImg },
+    { name: 'Handwoven Area Rug 5x7', category: 'Decor', price: '₹6,799', platform: 'Jaypore', altPrice: '₹7,999', altPlatform: 'FabIndia', rating: 4.6, image: rugImg },
+    { name: 'TV Console Unit – Walnut', category: 'Storage', price: '₹12,499', platform: 'WoodenStreet', altPrice: '₹14,299', altPlatform: 'Pepperfry', rating: 4.4, image: tvUnitImg },
   ],
   bedroom: [
-    { name: 'King Size Bed – Sheesham', category: 'Bed', price: '₹24,999', platform: 'WoodenStreet', altPrice: '₹27,499', altPlatform: 'Urban Ladder', rating: 4.5 },
-    { name: 'Memory Foam Mattress', category: 'Mattress', price: '₹15,999', platform: 'Wakefit', altPrice: '₹18,499', altPlatform: 'Sleepyhead', rating: 4.7 },
-    { name: 'Bedside Table Set of 2', category: 'Table', price: '₹5,999', platform: 'Amazon', altPrice: '₹6,499', altPlatform: 'Flipkart', rating: 4.2 },
-    { name: '3-Door Wardrobe', category: 'Storage', price: '₹18,999', platform: 'Godrej Interio', altPrice: '₹21,999', altPlatform: 'HomeTown', rating: 4.3 },
+    { name: 'King Size Bed – Sheesham', category: 'Bed', price: '₹24,999', platform: 'WoodenStreet', altPrice: '₹27,499', altPlatform: 'Urban Ladder', rating: 4.5, image: bedImg },
+    { name: 'Memory Foam Mattress', category: 'Mattress', price: '₹15,999', platform: 'Wakefit', altPrice: '₹18,499', altPlatform: 'Sleepyhead', rating: 4.7, image: mattressImg },
+    { name: 'Bedside Table Set of 2', category: 'Table', price: '₹5,999', platform: 'Amazon', altPrice: '₹6,499', altPlatform: 'Flipkart', rating: 4.2, image: nightstandImg },
+    { name: '3-Door Wardrobe', category: 'Storage', price: '₹18,999', platform: 'Godrej Interio', altPrice: '₹21,999', altPlatform: 'HomeTown', rating: 4.3, image: wardrobeImg },
   ],
   kitchen: [
-    { name: 'Modular Cabinet Set', category: 'Cabinets', price: '₹45,999', platform: 'HomeLane', altPrice: '₹52,000', altPlatform: 'LivSpace', rating: 4.4 },
-    { name: 'Granite Countertop Slab', category: 'Surface', price: '₹8,999', platform: 'BuildBazaar', altPrice: '₹10,499', altPlatform: 'Local Vendor', rating: 4.1 },
-    { name: 'Chimney – 60cm Auto Clean', category: 'Appliance', price: '₹12,499', platform: 'Amazon', altPrice: '₹13,999', altPlatform: 'Flipkart', rating: 4.6 },
+    { name: 'Modular Cabinet Set', category: 'Cabinets', price: '₹45,999', platform: 'HomeLane', altPrice: '₹52,000', altPlatform: 'LivSpace', rating: 4.4, image: kitchenCabinetImg },
+    { name: 'Granite Countertop Slab', category: 'Surface', price: '₹8,999', platform: 'BuildBazaar', altPrice: '₹10,499', altPlatform: 'Local Vendor', rating: 4.1, image: countertopImg },
+    { name: 'Chimney – 60cm Auto Clean', category: 'Appliance', price: '₹12,499', platform: 'Amazon', altPrice: '₹13,999', altPlatform: 'Flipkart', rating: 4.6, image: chimneyImg },
   ],
 };
 
@@ -85,7 +100,6 @@ export default function ProductDemoSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="glass-card rounded-2xl p-8 mb-6"
           >
-            {/* Room selector */}
             <div className="mb-6">
               <label className="font-display text-sm font-semibold text-foreground mb-3 block">Select Room</label>
               <div className="flex flex-wrap gap-3">
@@ -106,7 +120,6 @@ export default function ProductDemoSection() {
               </div>
             </div>
 
-            {/* Aesthetic */}
             <div className="mb-6">
               <label className="font-display text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Palette size={15} className="text-copper" /> Aesthetic
@@ -128,7 +141,6 @@ export default function ProductDemoSection() {
               </div>
             </div>
 
-            {/* Budget */}
             <div className="mb-8">
               <label className="font-display text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                 <IndianRupee size={15} className="text-primary" /> Budget Range
@@ -196,11 +208,16 @@ export default function ProductDemoSection() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, delay: i * 0.08 }}
-                      className="p-5 flex items-center gap-4 hover:bg-accent/30 transition-colors group"
+                      className="p-4 md:p-5 flex items-center gap-4 hover:bg-accent/30 transition-colors group"
                     >
-                      <span className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center font-display text-xs font-bold text-accent-foreground shrink-0">
-                        {i + 1}
-                      </span>
+                      {/* Product image */}
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden bg-muted shrink-0 border border-border">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-display text-sm font-semibold text-foreground">{product.name}</div>
                         <div className="font-body text-xs text-muted-foreground mt-0.5 flex items-center gap-2">

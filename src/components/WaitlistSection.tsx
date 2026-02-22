@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { ArrowRight, Check, Users } from 'lucide-react';
+import { ArrowRight, Check, Sparkles } from 'lucide-react';
 
 export default function WaitlistSection() {
   const ref = useRef(null);
@@ -33,9 +33,9 @@ export default function WaitlistSection() {
             Join our early access list. Launching 2nd week of March 2026.
           </p>
           <div className="flex items-center justify-center gap-2 mb-10">
-            <Users size={14} className="text-copper" />
+            <Sparkles size={14} className="text-copper" />
             <span className="font-body text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">2,400+</span> people already signed up
+              28,000+ products ready · AI assistant included · Free early access
             </span>
           </div>
 

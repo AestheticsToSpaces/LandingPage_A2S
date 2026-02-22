@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Scene3D from './Scene3D';
 
 export default function HeroSection() {
@@ -7,27 +7,19 @@ export default function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <Scene3D />
 
-      {/* Subtle gradient overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background z-[1]" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent z-[1]" />
 
       <div className="relative z-10 container mx-auto px-6 text-center">
-        {/* Social proof badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-border bg-card/80 backdrop-blur-sm mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border bg-card/80 backdrop-blur-sm mb-8 shadow-sm"
         >
-          <div className="flex -space-x-2">
-            {['🧑‍💻', '👩‍🎨', '👨‍💼', '👩‍💻'].map((emoji, i) => (
-              <span key={i} className="w-6 h-6 rounded-full bg-muted border-2 border-card flex items-center justify-center text-xs">
-                {emoji}
-              </span>
-            ))}
-          </div>
-          <span className="text-xs font-body text-muted-foreground">
-            <span className="font-semibold text-foreground">2,400+</span> designers already on the waitlist
+          <Sparkles size={14} className="text-copper" />
+          <span className="text-xs font-body text-muted-foreground tracking-wide">
+            Launching March 2026 · 28,000+ Products at Launch
           </span>
         </motion.div>
 
@@ -74,7 +66,7 @@ export default function HeroSection() {
           </a>
         </motion.div>
 
-        {/* Stats */}
+        {/* Only provable/verifiable facts from their exec summary */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -82,12 +74,12 @@ export default function HeroSection() {
           className="mt-20 flex flex-wrap items-center justify-center gap-8 md:gap-16"
         >
           {[
-            { value: '₹5L Cr+', label: 'Market Size' },
             { value: '28,000+', label: 'Products at Launch' },
-            { value: '100M+', label: 'Target Homeowners' },
+            { value: 'AI-Powered', label: 'Design Assistant' },
+            { value: 'Cross-Platform', label: 'Price Intelligence' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="font-display text-2xl md:text-3xl font-bold text-gradient-copper">
+              <div className="font-display text-xl md:text-2xl font-bold text-gradient-copper">
                 {stat.value}
               </div>
               <div className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
