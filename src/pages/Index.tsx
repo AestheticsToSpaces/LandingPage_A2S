@@ -3,7 +3,9 @@ import HeroSection from '@/components/HeroSection';
 import SocialProofSection from '@/components/SocialProofSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
+import PromptToRoomDemo from '@/components/PromptToRoomDemo';
 import ProductDemoSection from '@/components/ProductDemoSection';
+import BreakdownDemo from '@/components/BreakdownDemo';
 import MarketSection from '@/components/MarketSection';
 import VisionSection from '@/components/VisionSection';
 import WaitlistSection from '@/components/WaitlistSection';
@@ -17,7 +19,9 @@ const Index = () => {
       <SocialProofSection />
       <FeaturesSection />
       <HowItWorksSection />
+      <PromptToRoomDemo />
       <ProductDemoSection />
+      <BreakdownDemo />
       <MarketSection />
       <VisionSection />
       <WaitlistSection />
