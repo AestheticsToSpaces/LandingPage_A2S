@@ -1,6 +1,31 @@
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
 import Scene3D from './Scene3D';
+
+function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let startTime: number | null = null;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / 2000, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(target * eased));
+      if (progress < 1) requestAnimationFrame(step);
+      else setCount(target);
+    };
+
+    requestAnimationFrame(step);
+  }, [inView, target]);
+
+  return <span ref={ref}>{count.toLocaleString('en-IN')}{suffix}</span>;
+}
 
 export default function HeroSection() {
   return (
@@ -25,8 +50,19 @@ export default function HeroSection() {
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          animate={{
+            opacity: 1,
+            y: [0, -10, 0],
+          }}
+          transition={{
+            opacity: { duration: 0.8, delay: 0.5 },
+            y: {
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1.3
+            }
+          }}
           className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-6"
         >
           <span className="text-gradient-hero">Design Your</span>
@@ -40,8 +76,8 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.7 }}
           className="font-body text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          India's first AI-powered design infrastructure. Room-specific catalogs, 
-          cross-platform price intelligence, and an AI assistant that builds your 
+          India's first AI-powered design infrastructure. Room-specific catalogs,
+          cross-platform price intelligence, and an AI assistant that builds your
           dream room from a single prompt.
         </motion.p>
 
@@ -73,20 +109,30 @@ export default function HeroSection() {
           transition={{ duration: 1, delay: 1.2 }}
           className="mt-20 flex flex-wrap items-center justify-center gap-8 md:gap-16"
         >
-          {[
-            { value: '28,000+', label: 'Products at Launch' },
-            { value: 'AI-Powered', label: 'Design Assistant' },
-            { value: 'Cross-Platform', label: 'Price Intelligence' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-display text-xl md:text-2xl font-bold text-gradient-copper">
-                {stat.value}
-              </div>
-              <div className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
-                {stat.label}
-              </div>
+          <div className="text-center">
+            <div className="font-display text-xl md:text-2xl font-bold text-gradient-copper">
+              <AnimatedCounter target={28000} suffix="+" />
             </div>
-          ))}
+            <div className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+              Products at Launch
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-xl md:text-2xl font-bold text-gradient-copper">
+              AI-Powered
+            </div>
+            <div className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+              Design Assistant
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-xl md:text-2xl font-bold text-gradient-copper">
+              Cross-Platform
+            </div>
+            <div className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+              Price Intelligence
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

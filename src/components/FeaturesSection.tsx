@@ -7,31 +7,37 @@ const features = [
     icon: LayoutGrid,
     title: 'Room-Specific Catalogs',
     desc: 'Browse curated product collections organized by room type — living room, bedroom, kitchen, and more.',
+    className: 'md:col-span-2 md:row-span-1',
   },
   {
     icon: IndianRupee,
     title: 'Cross-Platform Price Intel',
     desc: 'Compare prices across brands and platforms instantly. Never overpay for furniture again.',
+    className: 'md:col-span-1 md:row-span-2',
   },
   {
     icon: Brain,
     title: 'AI Design Assistant',
     desc: 'Describe your dream room and get a complete product shortlist with one prompt.',
+    className: 'md:col-span-1 md:row-span-1',
   },
   {
     icon: Palette,
     title: 'Aesthetic-Aware Filters',
     desc: 'Filter by style — Scandinavian, Mid-Century, Indian Contemporary, Minimalist, and more.',
+    className: 'md:col-span-1 md:row-span-1',
   },
   {
     icon: Search,
     title: 'Smart Discovery',
     desc: 'No more scrolling 12+ platforms. Find exactly what fits your space, style, and budget.',
+    className: 'md:col-span-2 md:row-span-1',
   },
   {
     icon: ShieldCheck,
     title: 'Trusted & Transparent',
     desc: 'Verified products, real reviews, and transparent pricing from organized retailers.',
+    className: 'md:col-span-1 md:row-span-1',
   },
 ];
 
@@ -231,20 +237,22 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="group glass-card rounded-2xl p-6 hover:border-primary/20 transition-all duration-500"
+      className={`group glass-card rounded-2xl p-6 hover:border-primary/20 transition-all duration-500 flex flex-col justify-between ${feature.className}`}
     >
-      {inView && <DemoComponent />}
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-          <feature.icon size={18} className="text-primary" />
+      <div>
+        {inView && <DemoComponent />}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+            <feature.icon size={18} className="text-primary" />
+          </div>
+          <h3 className="font-display text-base font-semibold text-foreground">
+            {feature.title}
+          </h3>
         </div>
-        <h3 className="font-display text-base font-semibold text-foreground">
-          {feature.title}
-        </h3>
+        <p className="font-body text-sm text-muted-foreground leading-relaxed">
+          {feature.desc}
+        </p>
       </div>
-      <p className="font-body text-sm text-muted-foreground leading-relaxed">
-        {feature.desc}
-      </p>
     </motion.div>
   );
 }
@@ -273,11 +281,11 @@ export default function FeaturesSection() {
             <span className="text-gradient-teal">Not Just Inspiration</span>
           </h2>
           <p className="font-body text-muted-foreground max-w-xl mx-auto">
-            A2S captures how India's next 100 million homeowners furnish their spaces.
+            Aesthetics To Spaces captures how India's next 100 million homeowners furnish their spaces.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
           {features.map((feature, i) => (
             <FeatureCard key={feature.title} feature={feature} index={i} />
           ))}

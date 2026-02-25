@@ -1,0 +1,17 @@
+{
+    "name": "a2s-waitlist-api",
+    "version": "1.0.0",
+    "description": "Azure Function API for A2S waitlist",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "func start"
+    },
+    "dependencies": {
+        "@azure/cosmos": "^4.0.0"
+    },
+    "devDependencies": {
+        "@azure/functions": "^3.5.0",
+        "typescript": "^5.0.0"
+    }
+}

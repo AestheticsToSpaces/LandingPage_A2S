@@ -25,15 +25,14 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'glass-nav py-3 shadow-sm' : 'py-5'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'glass-nav py-3 shadow-sm' : 'py-5'
+        }`}
     >
-      <div className="container mx-auto flex items-center justify-between px-6">
+      <div className="container mx-auto flex items-center justify-between pl-2 pr-6">
         <a href="#" className="flex items-center gap-3">
           <img src={logo} alt="A2S Logo" className="h-10 w-10 rounded-lg object-cover" />
           <span className="font-display text-xl font-bold text-foreground">
-            A2S
+            Aesthetics To Spaces
           </span>
         </a>
 
