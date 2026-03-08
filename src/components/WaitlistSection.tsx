@@ -506,7 +506,7 @@ ${shareUrl}`;
               <span className="text-xs font-bold text-primary">10</span>
             </div>
             <div className="flex-1">
-              <p className="font-body text-xs text-foreground">1 Month Free Premium</p>
+              <p className="font-body text-xs text-foreground">Founding Member Badge</p>
               <p className="font-body text-[10px] text-muted-foreground">+ Priority Access</p>
             </div>
             <div className="w-5 h-5 rounded-full border-2 border-border flex items-center justify-center">

@@ -148,7 +148,7 @@ serve(async (req) => {
                             </tr>
                             <tr>
                               <td style="padding: 6px 0; font-size: 14px; color: #374151;">
-                                <span style="color: #14b8a6; font-weight: 700;">10 referrals</span> → Priority Access + 1 month free Premium
+                                <span style="color: #14b8a6; font-weight: 700;">10 referrals</span> → Priority Access + Founding Member Badge
                               </td>
                             </tr>
                           </table>
