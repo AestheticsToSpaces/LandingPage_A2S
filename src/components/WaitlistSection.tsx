@@ -361,7 +361,7 @@ ${shareUrl}
 
 — ${firstName}`;
 
-  const twitterText = `Joining @A2SIndia — AI-powered home design platform launching March 2026. Cross-platform price comparison and intelligent design recommendations.
+  const twitterText = `Joining @A2S_India — AI-powered home design platform launching March 2026. Cross-platform price comparison and intelligent design recommendations.
 
 Referral code: ${referralCode}`;
 
