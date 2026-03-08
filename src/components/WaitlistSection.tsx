@@ -2,9 +2,9 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import {
   ArrowRight, ArrowLeft, Check, Sparkles, Copy, Share2, Users, Trophy,
-  Loader2, ChevronDown
+  Loader2, ChevronDown, Download
 } from 'lucide-react';
-import { submitToWaitlist, isSupabaseConfigured } from '@/services/supabase';
+import { submitToWaitlist, isSupabaseConfigured, checkEmailExists } from '@/services/supabase';
 import { WaitlistFormData } from '@/lib/waitlist';
 
 /* ──────────────────────────────────────────────
@@ -20,7 +20,14 @@ const STEPS = ['Contact', 'Your Home', 'Preferences'];
 /* ──────────────────────────────────────────────
    Step 1 — Contact Info
 ────────────────────────────────────────────── */
-function Step1({ form, setForm }: { form: WaitlistFormData; setForm: (f: WaitlistFormData) => void }) {
+function Step1({ form, setForm, emailStatus, setEmailStatus }: { 
+  form: WaitlistFormData; 
+  setForm: (f: WaitlistFormData) => void;
+  emailStatus: { checking: boolean; exists: boolean; referralCode?: string; position?: number };
+  setEmailStatus: (s: { checking: boolean; exists: boolean; referralCode?: string; position?: number }) => void;
+}) {
+  const emailCheckTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     // Auto-detect country via IP geolocation
     fetch('https://ipapi.co/json/')
@@ -28,6 +35,38 @@ function Step1({ form, setForm }: { form: WaitlistFormData; setForm: (f: Waitlis
       .then(data => { if (data.country_name && !form.country) setForm({ ...form, country: data.country_name }); })
       .catch(() => { });
   }, []);
+
+  // Real-time email check with debounce
+  const handleEmailChange = (email: string) => {
+    setForm({ ...form, email });
+    
+    // Clear previous timeout
+    if (emailCheckTimeout.current) {
+      clearTimeout(emailCheckTimeout.current);
+    }
+
+    // Reset status if email is invalid or empty
+    if (!email || !email.includes('@') || email.length < 5) {
+      setEmailStatus({ checking: false, exists: false });
+      return;
+    }
+
+    // Debounce the check
+    setEmailStatus({ ...emailStatus, checking: true });
+    emailCheckTimeout.current = setTimeout(async () => {
+      try {
+        const result = await checkEmailExists(email);
+        setEmailStatus({ 
+          checking: false, 
+          exists: result.exists, 
+          referralCode: result.referralCode,
+          position: result.position 
+        });
+      } catch {
+        setEmailStatus({ checking: false, exists: false });
+      }
+    }, 500);
+  };
 
   const field = 'px-4 py-3 w-full rounded-xl bg-background border border-border text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all';
 
@@ -40,7 +79,17 @@ function Step1({ form, setForm }: { form: WaitlistFormData; setForm: (f: Waitlis
         </div>
         <div>
           <label className="block text-xs font-body text-muted-foreground mb-1.5">Email address *</label>
-          <input type="email" className={field} placeholder="Sai Srinidhi@example.com" required value={form.email || ''} onChange={e => setForm({ ...form, email: e.target.value })} />
+          <input type="email" className={`${field} ${emailStatus.exists ? 'border-amber-500 focus:ring-amber-500/30' : ''}`} placeholder="Sai Srinidhi@example.com" required value={form.email || ''} onChange={e => handleEmailChange(e.target.value)} />
+          {emailStatus.checking && (
+            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+              <Loader2 size={12} className="animate-spin" /> Checking...
+            </p>
+          )}
+          {emailStatus.exists && !emailStatus.checking && (
+            <p className="text-xs text-amber-600 mt-1">
+              ⚠️ This email is already on the waitlist. You're #{(emailStatus.position || 0) + 1000} in queue!
+            </p>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -198,37 +247,141 @@ function Step3({ form, setForm }: { form: WaitlistFormData; setForm: (f: Waitlis
 /* ──────────────────────────────────────────────
    Success Card
 ────────────────────────────────────────────── */
-function SuccessCard({ referralCode, position, userName }: { referralCode: string; position: number; userName: string }) {
+function SuccessCard({ referralCode, position, userName, isExisting }: { referralCode: string; position: number; userName: string; isExisting?: boolean }) {
   const [copied, setCopied] = useState(false);
   const [copiedMsg, setCopiedMsg] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
+  const shareCardRef = useRef<HTMLDivElement>(null);
   const firstName = userName.split(' ')[0];
   const shareUrl = `${window.location.origin}?ref=${referralCode}`;
+  
+  // Display position with +1000 offset
+  const displayPosition = position + 1000;
 
-  // Platform-specific share messages
-  const whatsappText = `Hey! 👋 Found something actually useful —
-There's this new platform called A2S launching next month. It helps you design any room with AI — picks furniture, compares prices across Amazon, Pepperfry, IKEA all in one place. No more 12 tabs open 😭
-I'm on the early waitlist. Use my code and we both move up 👇
-🔑 ${referralCode}
-🔗 ${shareUrl}
-Launching March 2026 — joining is free rn`;
+  // Generate share card image as blob
+  const generateShareImage = async (): Promise<Blob | null> => {
+    if (!shareCardRef.current) return null;
+    
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#0d9488',
+        scale: 2,
+        useCORS: true,
+      });
+      
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/png', 1.0);
+      });
+    } catch (err) {
+      console.error('Failed to generate image:', err);
+      return null;
+    }
+  };
 
-  const twitterText = `we have 751 million internet users in India
-and people are still opening 12 tabs to buy a sofa
-@A2SIndia is fixing that — AI design assistant + cross-platform price intelligence, launching March 2026
-I'm on the waitlist. join with my code ${referralCode} →`;
+  // Download share card image
+  const downloadShareCard = async () => {
+    setDownloading(true);
+    try {
+      const blob = await generateShareImage();
+      if (blob) {
+        const link = document.createElement('a');
+        link.download = `A2S-Waitlist-${firstName}.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+    } finally {
+      setDownloading(false);
+    }
+  };
 
-  const linkedinText = `India's home design market is worth ₹5.2 Lakh Crore — and it's still almost entirely manual.
+  // Share with image using Web Share API
+  const shareWithImage = async (text: string, platform: string) => {
+    setDownloading(true);
+    try {
+      const blob = await generateShareImage();
+      
+      // Check if Web Share API with files is supported
+      if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], 'share.png', { type: 'image/png' })] })) {
+        const file = new File([blob], `A2S-Waitlist-${firstName}.png`, { type: 'image/png' });
+        
+        // Include title, text, and url for maximum compatibility
+        await navigator.share({
+          title: 'Join A2S Waitlist',
+          text: text,
+          url: shareUrl,
+          files: [file],
+        });
+      } else {
+        // Fallback: Copy text to clipboard, download image, then open share link
+        await navigator.clipboard.writeText(text);
+        
+        if (blob) {
+          const link = document.createElement('a');
+          link.download = `A2S-Waitlist-${firstName}.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }
+        
+        // Alert user that text is copied
+        alert('Image downloaded and message copied to clipboard! Paste the message when sharing.');
+        
+        // Open the platform-specific share URL after a brief delay
+        setTimeout(() => {
+          if (platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+          } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+          }
+        }, 500);
+      }
+    } catch (err) {
+      // User cancelled or error - fallback to direct link
+      if (platform === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+      } else if (platform === 'twitter') {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+      }
+    } finally {
+      setDownloading(false);
+    }
+  };
 
-The average homeowner visits 12+ platforms before buying a single piece of furniture. There's no price transparency, no design intelligence, and no single source of truth.
+  // Platform-specific share messages with name
+  const whatsappText = `Thought you'd find this interesting.
 
-A2S (Aesthetics To Spaces) is launching in March 2026 to fix exactly that — a room-specific catalog, cross-platform price comparison, and an AI design consultant that works within your budget.
+A2S (Aesthetics To Spaces) is India's first AI-powered home design platform — launching March 2026. It lets you design entire rooms with AI assistance, compare prices across all major platforms, and get curated recommendations within your budget.
 
-I've joined their early waitlist. If you're in home design, real estate, or just renovating soon — worth getting early access.
+I've secured early access. If you're planning to furnish or redesign anytime soon, this might be worth a look.
 
-🔑 Referral code: ${referralCode}
-🔗 ${shareUrl}
+Use my referral code to join: ${referralCode}
+${shareUrl}
 
-#A2S #PropTech #IndiaStartups #HomeDesign #AIDesign`;
+— ${firstName}`;
+
+  const twitterText = `Joining @A2SIndia — AI-powered home design platform launching March 2026. Cross-platform price comparison and intelligent design recommendations.
+
+Referral code: ${referralCode}`;
+
+  const linkedinText = `Excited to share that I've joined the early access waitlist for A2S (Aesthetics To Spaces).
+
+A2S is building India's first AI-powered home design infrastructure — enabling cross-platform price intelligence, room-specific product discovery, and AI design consultation.
+
+Launching March 2026. If you're in the home design, real estate, or interior design space, this is worth exploring.
+
+Referral code: ${referralCode}
+${shareUrl}`;
+
+  // Direct share without image
+  const shareWithoutImage = (text: string, platform: string) => {
+    if (platform === 'whatsapp') {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    } else if (platform === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+    }
+  };
 
   const copy = () => {
     navigator.clipboard.writeText(referralCode);
@@ -248,47 +401,160 @@ I've joined their early waitlist. If you're in home design, real estate, or just
       <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
         <Check size={30} className="text-primary" />
       </div>
-      <h3 className="font-display text-2xl font-bold text-foreground mb-1">You're on the list! 🎉</h3>
-      <p className="font-body text-muted-foreground text-sm mb-6">You're <span className="font-semibold text-primary">#{position}</span> in the queue. Share your code to move up!</p>
+      <h3 className="font-display text-2xl font-bold text-foreground mb-1">
+        {isExisting ? `Welcome back, ${firstName}! 👋` : `${firstName}, you're on the list! 🎉`}
+      </h3>
+      <p className="font-body text-muted-foreground text-sm mb-6">
+        {isExisting 
+          ? <>You've already joined! You're <span className="font-semibold text-primary">#{displayPosition.toLocaleString('en-IN')}</span> in the queue.</>
+          : <>You're <span className="font-semibold text-primary">#{displayPosition.toLocaleString('en-IN')}</span> in the queue. Share your code to move up!</>
+        }
+      </p>
 
       {/* Queue position badge */}
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent border border-border mb-6">
         <Trophy size={14} className="text-copper" />
-        <span className="font-body text-xs text-foreground">Queue position <strong>#{position}</strong></span>
+        <span className="font-body text-xs text-foreground">Queue position <strong>#{displayPosition.toLocaleString('en-IN')}</strong></span>
       </div>
 
-      {/* Referral code box */}
-      <div className="glass-card rounded-2xl p-6 mb-6 max-w-sm mx-auto">
-        <p className="font-body text-xs text-muted-foreground uppercase tracking-wider mb-3">Your Referral Code</p>
-        <div className="flex items-center justify-between gap-3 bg-accent rounded-xl px-4 py-3">
-          <span className="font-display text-xl font-bold text-primary tracking-widest">{referralCode}</span>
-          <button onClick={copy} className="p-2 rounded-lg hover:bg-primary/10 transition-colors" title="Copy code">
-            {copied ? <Check size={16} className="text-primary" /> : <Copy size={16} className="text-muted-foreground" />}
+      {/* Shareable Card for Download */}
+      <div className="mb-6">
+        <div 
+          ref={shareCardRef}
+          className="mx-auto max-w-sm rounded-2xl overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%)' }}
+        >
+          <div className="p-6 text-center text-white">
+            <div className="text-sm font-medium opacity-90 mb-1">AESTHETICS TO SPACES</div>
+            <div className="text-xs opacity-70 tracking-wider mb-6">INDIA'S DESIGN EXECUTION INFRASTRUCTURE</div>
+            
+            <div className="bg-white/15 backdrop-blur rounded-xl p-5 mb-4">
+              <div className="text-lg font-bold mb-1">{firstName}</div>
+              <div className="text-xs opacity-80 mb-4">is on the early access list</div>
+              <div className="text-4xl font-bold mb-1">#{displayPosition.toLocaleString('en-IN')}</div>
+              <div className="text-xs opacity-70">Queue Position</div>
+            </div>
+            
+            <div className="bg-white/20 rounded-lg px-4 py-3 mb-4">
+              <div className="text-[10px] opacity-70 uppercase tracking-wider mb-1">Referral Code</div>
+              <div className="text-xl font-bold tracking-widest">{referralCode}</div>
+            </div>
+            
+            <div className="text-[10px] opacity-70">
+              aestheticstospaces.tech • Launching March 2026
+            </div>
+          </div>
+        </div>
+        
+        <button
+          onClick={downloadShareCard}
+          disabled={downloading}
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm font-display text-foreground hover:bg-accent transition-colors disabled:opacity-50"
+        >
+          {downloading ? (
+            <><Loader2 size={14} className="animate-spin" /> Generating...</>
+          ) : (
+            <><Download size={14} /> Download Card to Share</>
+          )}
+        </button>
+      </div>
+
+      {/* Quick Copy Section */}
+      <div className="glass-card rounded-2xl p-5 mb-6 max-w-sm mx-auto">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div>
+            <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider">Your Code</p>
+            <p className="font-display text-lg font-bold text-primary tracking-widest">{referralCode}</p>
+          </div>
+          <button onClick={copy} className="px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors" title="Copy code">
+            {copied ? <Check size={16} className="text-primary" /> : <Copy size={16} className="text-primary" />}
           </button>
         </div>
-        <p className="font-body text-[11px] text-muted-foreground mt-3">Each person who uses your code moves you 2 spots forward</p>
+        <p className="font-body text-[11px] text-muted-foreground">Each person who uses your code moves you 2 spots forward</p>
+      </div>
+
+      {/* Referral Milestones */}
+      <div className="glass-card rounded-2xl p-5 mb-6 max-w-sm mx-auto">
+        <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider mb-3 text-center">Referral Rewards</p>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-bold text-primary">3</span>
+            </div>
+            <div className="flex-1">
+              <p className="font-body text-xs text-foreground">Early feature preview</p>
+              <p className="font-body text-[10px] text-muted-foreground">+6 spots bonus</p>
+            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-border flex items-center justify-center">
+              {/* TODO: Check referral count */}
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-bold text-primary">5</span>
+            </div>
+            <div className="flex-1">
+              <p className="font-body text-xs text-foreground font-semibold">Priority Access</p>
+              <p className="font-body text-[10px] text-muted-foreground">Skip the queue entirely</p>
+            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-border flex items-center justify-center">
+              {/* TODO: Check referral count */}
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-bold text-primary">10</span>
+            </div>
+            <div className="flex-1">
+              <p className="font-body text-xs text-foreground">1 Month Free Premium</p>
+              <p className="font-body text-[10px] text-muted-foreground">+ Priority Access</p>
+            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-border flex items-center justify-center">
+              {/* TODO: Check referral count */}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Social share */}
       <div className="flex flex-col items-center gap-4">
         <p className="font-body text-xs text-muted-foreground flex items-center gap-1.5">
-          <Share2 size={12} /> Share to move up the queue:
+          <Share2 size={12} /> Share your spot:
         </p>
-        <div className="flex flex-wrap justify-center gap-2">
-          <a href={`https://wa.me/?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noopener noreferrer"
-            className="px-4 py-2 rounded-lg bg-[#25D366] text-white text-xs font-display font-semibold hover:opacity-90 transition-opacity">
-            WhatsApp
-          </a>
-          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer"
-            className="px-4 py-2 rounded-lg bg-foreground text-background text-xs font-display font-semibold hover:opacity-80 transition-opacity">
-            Twitter/X
-          </a>
-          <button onClick={() => copyMessage('linkedin', linkedinText)}
-            className="px-4 py-2 rounded-lg bg-[#0A66C2] text-white text-xs font-display font-semibold hover:opacity-90 transition-opacity">
-            {copiedMsg === 'linkedin' ? 'Copied!' : 'Copy for LinkedIn'}
-          </button>
+        
+        {/* Share with image */}
+        <div className="w-full">
+          <p className="font-body text-[10px] text-muted-foreground mb-2 text-center">With your card:</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <button onClick={() => shareWithImage(whatsappText, 'whatsapp')}
+              className="px-3 py-1.5 rounded-lg bg-[#25D366] text-white text-[10px] font-display font-semibold hover:opacity-90 transition-opacity">
+              WhatsApp
+            </button>
+            <button onClick={() => shareWithImage(twitterText, 'twitter')}
+              className="px-3 py-1.5 rounded-lg bg-foreground text-background text-[10px] font-display font-semibold hover:opacity-80 transition-opacity">
+              Twitter/X
+            </button>
+          </div>
         </div>
-        <p className="font-body text-[10px] text-muted-foreground/70">Tip: For LinkedIn, paste the copied message in your post</p>
+        
+        {/* Share without image */}
+        <div className="w-full">
+          <p className="font-body text-[10px] text-muted-foreground mb-2 text-center">Text only:</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <button onClick={() => shareWithoutImage(whatsappText, 'whatsapp')}
+              className="px-3 py-1.5 rounded-lg border border-[#25D366] text-[#25D366] text-[10px] font-display font-semibold hover:bg-[#25D366]/10 transition-colors">
+              WhatsApp
+            </button>
+            <button onClick={() => shareWithoutImage(twitterText, 'twitter')}
+              className="px-3 py-1.5 rounded-lg border border-foreground text-foreground text-[10px] font-display font-semibold hover:bg-foreground/10 transition-colors">
+              Twitter/X
+            </button>
+            <button onClick={() => copyMessage('linkedin', linkedinText)}
+              className="px-3 py-1.5 rounded-lg border border-[#0A66C2] text-[#0A66C2] text-[10px] font-display font-semibold hover:bg-[#0A66C2]/10 transition-colors">
+              {copiedMsg === 'linkedin' ? 'Copied!' : 'LinkedIn'}
+            </button>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
@@ -305,7 +571,8 @@ export default function WaitlistSection() {
   const [form, setForm] = useState<WaitlistFormData>({ notifyLaunch: true } as WaitlistFormData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<{ referralCode: string; position: number } | null>(null);
+  const [result, setResult] = useState<{ referralCode: string; position: number; isExisting?: boolean } | null>(null);
+  const [emailStatus, setEmailStatus] = useState<{ checking: boolean; exists: boolean; referralCode?: string; position?: number }>({ checking: false, exists: false });
 
   const canNext = () => {
     if (step === 0) return !!(form.fullName?.trim() && form.email?.trim());
@@ -314,6 +581,17 @@ export default function WaitlistSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // If email already exists and user tries to submit, show their existing info
+    if (step === 0 && emailStatus.exists && emailStatus.referralCode) {
+      setResult({ 
+        referralCode: emailStatus.referralCode, 
+        position: emailStatus.position || 1,
+        isExisting: true 
+      });
+      return;
+    }
+    
     if (step < 2) { setStep(s => s + 1); return; }
     setLoading(true);
     setError('');
@@ -322,7 +600,17 @@ export default function WaitlistSection() {
         throw new Error('Database not configured. Please check your .env file.');
       }
       const res = await submitToWaitlist(form);
-      setResult({ referralCode: res.referralCode, position: res.position });
+      setResult({ referralCode: res.referralCode, position: res.position, isExisting: res.isExisting });
+      
+      // Track signup event in Google Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'waitlist_signup', {
+          event_category: 'conversion',
+          event_label: res.isExisting ? 'returning_user' : 'new_signup',
+          referral_source: form.referredBy || 'direct',
+          position: res.position
+        });
+      }
     } catch (err: any) {
       console.error('Waitlist submission error:', err);
       setError(err.message || 'Something went wrong. Please try again.');
@@ -379,7 +667,7 @@ export default function WaitlistSection() {
                 <AnimatePresence mode="wait">
                   <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
-                    {step === 0 && <Step1 form={form} setForm={setForm} />}
+                    {step === 0 && <Step1 form={form} setForm={setForm} emailStatus={emailStatus} setEmailStatus={setEmailStatus} />}
                     {step === 1 && <Step2 form={form} setForm={setForm} />}
                     {step === 2 && <Step3 form={form} setForm={setForm} />}
                   </motion.div>
@@ -415,7 +703,7 @@ export default function WaitlistSection() {
               </form>
             </>
           ) : (
-            <SuccessCard referralCode={result.referralCode} position={result.position} userName={form.fullName || 'Friend'} />
+            <SuccessCard referralCode={result.referralCode} position={result.position} userName={form.fullName || 'Friend'} isExisting={result.isExisting} />
           )}
         </motion.div>
       </div>

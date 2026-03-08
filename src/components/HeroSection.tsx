@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Clock } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import Scene3D from './Scene3D';
 
@@ -25,6 +25,66 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   }, [inView, target]);
 
   return <span ref={ref}>{count.toLocaleString('en-IN')}{suffix}</span>;
+}
+
+function CountdownTimer() {
+  const targetDate = new Date('2026-03-29T12:00:00+05:30').getTime();
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTime = () => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        });
+      }
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [targetDate]);
+
+  const TimeUnit = ({ value, label }: { value: number; label: string }) => (
+    <div className="flex flex-col items-center">
+      <div className="bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/20 rounded-xl px-3 py-2 min-w-[52px]">
+        <span className="font-display text-xl md:text-2xl font-bold text-primary">
+          {value.toString().padStart(2, '0')}
+        </span>
+      </div>
+      <span className="font-body text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">{label}</span>
+    </div>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 1.1 }}
+      className="mt-8"
+    >
+      <div className="inline-flex items-center gap-2 mb-3">
+        <Clock size={14} className="text-copper" />
+        <span className="font-body text-xs text-muted-foreground">Launching in</span>
+      </div>
+      <div className="flex items-center justify-center gap-2 md:gap-3">
+        <TimeUnit value={timeLeft.days} label="Days" />
+        <span className="font-display text-xl text-muted-foreground/50 mt-[-16px]">:</span>
+        <TimeUnit value={timeLeft.hours} label="Hours" />
+        <span className="font-display text-xl text-muted-foreground/50 mt-[-16px]">:</span>
+        <TimeUnit value={timeLeft.minutes} label="Mins" />
+        <span className="font-display text-xl text-muted-foreground/50 mt-[-16px]">:</span>
+        <TimeUnit value={timeLeft.seconds} label="Secs" />
+      </div>
+      <p className="font-body text-[11px] text-muted-foreground/70 mt-3">March 29, 2026 · 12:00 PM IST</p>
+    </motion.div>
+  );
 }
 
 export default function HeroSection() {
@@ -101,6 +161,9 @@ export default function HeroSection() {
             See Product Demo
           </a>
         </motion.div>
+
+        {/* Countdown Timer */}
+        <CountdownTimer />
 
         {/* Only provable/verifiable facts from their exec summary */}
         <motion.div

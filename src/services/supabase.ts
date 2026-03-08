@@ -162,7 +162,7 @@ export async function sendWelcomeEmail(
     throw new Error('Database not configured');
   }
 
-  const { error } = await supabase.functions.invoke('send-welcome-email', {
+  const { error } = await supabase.functions.invoke('send-welcome-mail', {
     body: { email, firstName, referralCode },
   });
 
@@ -170,4 +170,27 @@ export async function sendWelcomeEmail(
     console.error('Error sending welcome email:', error);
     throw error;
   }
+}
+
+// Check if email already exists in waitlist
+export async function checkEmailExists(email: string): Promise<{ exists: boolean; referralCode?: string; position?: number }> {
+  if (!supabase || !email) {
+    return { exists: false };
+  }
+
+  const { data } = await supabase
+    .from('waitlist')
+    .select('referral_code, queue_position')
+    .eq('email', email.toLowerCase().trim())
+    .single();
+
+  if (data) {
+    return {
+      exists: true,
+      referralCode: data.referral_code,
+      position: data.queue_position,
+    };
+  }
+
+  return { exists: false };
 }
