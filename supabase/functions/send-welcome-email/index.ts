@@ -287,7 +287,7 @@ serve(async (req) => {
                 <!-- Email -->
                 <tr>
                   <td align="center" style="padding-bottom: 15px;">
-                    <a href="mailto:aestheticstospaces2@gmail.com" style="color: #14b8a6; text-decoration: none; font-size: 13px;">aestheticstospaces2@gmail.com</a>
+                    <a href="mailto:hello@mail.aestheticstospaces.tech" style="color: #14b8a6; text-decoration: none; font-size: 13px;">hello@mail.aestheticstospaces.tech</a>
                   </td>
                 </tr>
                 <!-- Tagline -->
@@ -325,7 +325,7 @@ serve(async (req) => {
                   <td align="center" style="padding-top: 15px;">
                     <p style="font-size: 10px; color: #6b7280; margin: 0;">
                       You received this email because you signed up for the A2S waitlist.<br/>
-                      <a href="mailto:aestheticstospaces2@gmail.com?subject=Unsubscribe&body=Please%20remove%20me%20from%20the%20waitlist.%20Email:%20${email}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe</a>
+                      <a href="mailto:hello@mail.aestheticstospaces.tech?subject=Unsubscribe&body=Please%20remove%20me%20from%20the%20waitlist.%20Email:%20${email}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe</a>
                     </p>
                   </td>
                 </tr>

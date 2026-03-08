@@ -42,10 +42,10 @@ export default function Footer() {
             <p className="font-body text-sm text-muted-foreground leading-relaxed mb-5 max-w-xs">
               India's AI-powered home design infrastructure. Discover, compare, and design your perfect space.
             </p>
-            <a href="mailto:aestheticstospaces2@gmail.com"
+            <a href="mailto:hello@mail.aestheticstospaces.tech"
               className="inline-flex items-center gap-2 font-body text-sm text-primary hover:text-primary/80 transition-colors">
               <Mail size={14} />
-              aestheticstospaces2@gmail.com
+              hello@mail.aestheticstospaces.tech
             </a>
             {/* Social icons */}
             <div className="flex items-center gap-3 mt-5">
