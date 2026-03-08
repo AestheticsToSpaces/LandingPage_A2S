@@ -9,7 +9,7 @@ const faqs = [
     },
     {
         q: 'When does it launch?',
-        a: 'We launch on March 29, 2026. Waitlist members will get access 1 week early, before the public.','
+        a: 'We launch on March 29, 2026. Waitlist members will get access 1 week early, before the public.',
     },
     {
         q: 'How does the AI Design Assistant work?',
