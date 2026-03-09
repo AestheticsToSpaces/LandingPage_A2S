@@ -3,7 +3,6 @@ import { ArrowRight, Sparkles, Clock } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 
 import Scene3D from './Scene3D';
-import heroFallback from '@/assets/hero-fallback.jpg'; // Add a static fallback image to assets
 import { useEffect, useRef, useState } from 'react';
 
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
@@ -92,38 +91,9 @@ function CountdownTimer() {
 }
 
 export default function HeroSection() {
-  const [show3D, setShow3D] = useState(false);
-  const heroRef = useRef(null);
-
-  useEffect(() => {
-    if (!heroRef.current) return;
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShow3D(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '0px', threshold: 0.1 }
-    );
-    observer.observe(heroRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ minHeight: '100vh' }}>
-      {/* Lazy-load 3D scene, show fallback image until in view */}
-      {show3D ? (
-        <Scene3D />
-      ) : (
-        <img
-          src={heroFallback}
-          alt="A2S Hero Fallback"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ minHeight: '100vh', objectFit: 'cover' }}
-          loading="eager"
-        />
-      )}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ minHeight: '100vh' }}>
+      <Scene3D />
 
       <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background z-[1]" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent z-[1]" />
