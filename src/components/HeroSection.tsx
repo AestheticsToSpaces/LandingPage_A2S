@@ -96,16 +96,16 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background z-[1]" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent z-[1]" />
 
-      <div className="relative z-10 container mx-auto px-6 text-center">
+      <div className="relative z-10 container mx-auto px-6 text-center pt-20 md:pt-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border bg-card/80 backdrop-blur-sm mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-border bg-card/80 backdrop-blur-sm mb-6 md:mb-8 shadow-sm"
         >
           <Sparkles size={14} className="text-copper" />
-          <span className="text-xs font-body text-muted-foreground tracking-wide">
-            Launching March 29, 2026 · 28,000+ Products at Launch
+          <span className="text-[10px] md:text-xs font-body text-muted-foreground tracking-wide">
+            Launching March 29, 2026
           </span>
         </motion.div>
 

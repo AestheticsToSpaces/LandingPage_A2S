@@ -226,7 +226,7 @@ function Particles() {
 
 export default function Scene3D() {
   return (
-    <div className="absolute inset-0 z-0" style={{ minHeight: '100vh', contain: 'layout' }}>
+    <div className="absolute inset-0 z-0 hidden md:block" style={{ minHeight: '100vh', contain: 'layout' }}>
       <Canvas camera={{ position: [3.5, 1.8, 5.5], fov: 42 }} dpr={[1, 2]}>
         <ambientLight intensity={0.5} />
         <pointLight position={[5, 5, 5]} intensity={0.2} color="#1a7a8a" />
