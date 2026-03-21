@@ -97,7 +97,7 @@ function Step1({ form, setForm, emailStatus, setEmailStatus }: {
           <input className={field} placeholder="Enter your phone number" value={form.phone || ''} onChange={e => setForm({ ...form, phone: e.target.value })} />
         </div>
         <div>
-          <label htmlFor="country" className="block text-xs font-body text-muted-foreground mb-1.5">Country</label>
+          <label htmlFor="country" className="block text-xs font-body text-muted-foreground mb-1.5">Country *</label>
           <div className="relative">
             <select id="country" className={`${field} appearance-none pr-10`} value={form.country || ''} onChange={e => setForm({ ...form, country: e.target.value })}>
               <option value="">Select country</option>
@@ -107,10 +107,10 @@ function Step1({ form, setForm, emailStatus, setEmailStatus }: {
           </div>
         </div>
       </div>
-      <div>
-        <label className="block text-xs font-body text-muted-foreground mb-1.5">City</label>
-        <input className={field} placeholder="Enter your city" value={form.city || ''} onChange={e => setForm({ ...form, city: e.target.value })} />
-      </div>
+        <div>
+          <label className="block text-xs font-body text-muted-foreground mb-1.5">City *</label>
+          <input className={field} placeholder="Enter your city" required value={form.city || ''} onChange={e => setForm({ ...form, city: e.target.value })} />
+        </div>
     </div>
   );
 }
@@ -132,25 +132,25 @@ function Step2({ form, setForm }: { form: WaitlistFormData; setForm: (f: Waitlis
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">I am a…</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">I am a… *</p>
         <div className="flex flex-wrap gap-2">
           {['Homeowner', 'Renter', 'Renovating', 'Planning to buy', 'Just exploring'].map(v => pill(v, 'userType', v))}
         </div>
       </div>
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">When are you planning to furnish / redesign?</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">When are you planning to furnish / redesign? *</p>
         <div className="flex flex-wrap gap-2">
           {['Within 1 month', '1–3 months', '3–6 months', '6–12 months', 'Just browsing'].map(v => pill(v, 'furnishTimeline', v))}
         </div>
       </div>
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">Budget range</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">Budget range *</p>
         <div className="flex flex-wrap gap-2">
           {['Under ₹5K', 'Under ₹50K', 'Under ₹1L', '₹1–2L', '₹2–5L', '₹5–10L', '₹10–25L', '₹25L+'].map(v => pill(v, 'budgetRange', v))}
         </div>
       </div>
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">Room I'm most interested in</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">Room I'm most interested in *</p>
         <div className="flex flex-wrap gap-2">
           {['Living Room', 'Bedroom', 'Kitchen', 'Dining Room', 'Home Office', 'Entire Home'].map(v => pill(v, 'roomInterest', v))}
         </div>
@@ -190,26 +190,26 @@ function Step3({ form, setForm }: { form: WaitlistFormData; setForm: (f: Waitlis
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">My aesthetic style</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">My aesthetic style *</p>
         <div className="flex flex-wrap gap-2">
           {['Minimal', 'Scandinavian', 'Indian Contemporary', 'Mid-Century Modern', 'Luxury', 'Boho', 'Industrial'].map(v => pill(v, 'aestheticPreference', v))}
         </div>
       </div>
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">Platforms I currently use <span className="text-muted-foreground/60">(select all that apply)</span></p>
+        <p className="text-xs font-body text-muted-foreground mb-3">Platforms I currently use * <span className="text-muted-foreground/60">(select at least one)</span></p>
         <div className="flex flex-wrap gap-2">
           {['Amazon', 'Pepperfry', 'Urban Ladder', 'IKEA', 'Flipkart', 'Instagram', 'Local stores'].map(v => multiPill(v, v))}
         </div>
       </div>
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-3">My biggest pain point</p>
+        <p className="text-xs font-body text-muted-foreground mb-3">My biggest pain point *</p>
         <div className="flex flex-wrap gap-2">
           {['Finding matching styles', 'Price comparison', 'Design advice', 'Quality uncertainty', 'Delivery & setup'].map(v => pill(v, 'painPoint', v))}
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="referralSource" className="block text-xs font-body text-muted-foreground mb-1.5">How did you hear about us?</label>
+          <div className="relative">
+            <label htmlFor="referralSource" className="block text-xs font-body text-muted-foreground mb-1.5">How did you hear about us? *</label>
           <div className="relative">
             <select id="referralSource" className={`${field} appearance-none pr-10`} value={form.referralSource || ''} onChange={e => setForm({ ...form, referralSource: e.target.value })}>
               <option value="">Select one</option>
@@ -574,7 +574,15 @@ export default function WaitlistSection() {
   const [emailStatus, setEmailStatus] = useState<{ checking: boolean; exists: boolean; referralCode?: string; position?: number }>({ checking: false, exists: false });
 
   const canNext = () => {
-    if (step === 0) return !!(form.fullName?.trim() && form.email?.trim());
+    if (step === 0) {
+      return !!(form.fullName?.trim() && form.email?.trim() && form.city?.trim() && form.country);
+    }
+    if (step === 1) {
+      return !!(form.userType && form.furnishTimeline && form.budgetRange && form.roomInterest);
+    }
+    if (step === 2) {
+      return !!(form.aestheticPreference && (form.currentPlatforms || []).length > 0 && form.painPoint && form.referralSource);
+    }
     return true;
   };
 
