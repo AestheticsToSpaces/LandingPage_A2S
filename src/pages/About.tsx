@@ -170,8 +170,8 @@ export default function About() {
           <div className="mt-16 text-center">
             <p className="font-body text-sm text-muted-foreground">
               Have questions? Reach out at{' '}
-              <a href="mailto:hello@mail.aestheticstospaces.tech" className="text-primary hover:underline">
-                hello@mail.aestheticstospaces.tech
+              <a href="mailto:aestheticstospaces2@gmail.com" className="text-primary hover:underline">
+                aestheticstospaces2@gmail.com
               </a>
             </p>
           </div>

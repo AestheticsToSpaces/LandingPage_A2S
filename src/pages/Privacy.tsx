@@ -104,8 +104,8 @@ export default function Privacy() {
                 </ul>
                 <p className="font-body text-muted-foreground leading-relaxed mt-4">
                   To exercise these rights, email us at{' '}
-                  <a href="mailto:hello@mail.aestheticstospaces.tech" className="text-primary hover:underline">
-                    hello@mail.aestheticstospaces.tech
+                  <a href="mailto:aestheticstospaces2@gmail.com" className="text-primary hover:underline">
+                    aestheticstospaces2@gmail.com
                   </a>
                 </p>
               </section>
@@ -126,8 +126,8 @@ export default function Privacy() {
                 </h2>
                 <p className="font-body text-muted-foreground leading-relaxed">
                   For privacy-related questions or concerns, contact us at:{' '}
-                  <a href="mailto:hello@mail.aestheticstospaces.tech" className="text-primary hover:underline">
-                    hello@mail.aestheticstospaces.tech
+                  <a href="mailto:aestheticstospaces2@gmail.com" className="text-primary hover:underline">
+                    aestheticstospaces2@gmail.com
                   </a>
                 </p>
               </section>
